@@ -4,5 +4,5 @@ public record JogoResponseDTO(
         Long id,
         String titulo,
         String plataforma,
-        String nomeCategoria
-) { }
+        String categoriaNome
+) {}

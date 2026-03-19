@@ -15,26 +15,52 @@ public class CategoriaService {
 
     private final CategoriaRepository repository;
 
+    // ✅ CREATE
     public CategoriaResponseDTO salvar(CategoriaRequestDTO dto){
 
-        Categoria c = new Categoria();
-        c.setNome(dto.nome());
+        Categoria categoria = new Categoria();
+        categoria.setNome(dto.nome());
 
-        c = repository.save(c);
-
-        return new CategoriaResponseDTO(
-                c.getId(),
-                c.getNome()
-        );
+        return toDTO(repository.save(categoria));
     }
 
+    // ✅ READ (LISTAR)
     public List<CategoriaResponseDTO> listar(){
         return repository.findAll()
                 .stream()
-                .map(c -> new CategoriaResponseDTO(
-                        c.getId(),
-                        c.getNome()
-                ))
+                .map(this::toDTO)
                 .toList();
+    }
+
+    // ✅ READ (POR ID)
+    public CategoriaResponseDTO buscarPorId(Long id){
+        Categoria categoria = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+
+        return toDTO(categoria);
+    }
+
+    // ✅ UPDATE
+    public CategoriaResponseDTO atualizar(Long id, CategoriaRequestDTO dto){
+
+        Categoria categoria = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+
+        categoria.setNome(dto.nome());
+
+        return toDTO(repository.save(categoria));
+    }
+
+    // ✅ DELETE
+    public void deletar(Long id){
+        repository.deleteById(id);
+    }
+
+    // 🔹 MÉTODO AUXILIAR (MAPPER)
+    private CategoriaResponseDTO toDTO(Categoria categoria){
+        return new CategoriaResponseDTO(
+                categoria.getId(),
+                categoria.getNome()
+        );
     }
 }
