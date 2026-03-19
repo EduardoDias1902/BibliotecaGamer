@@ -33,4 +33,14 @@ public class JogoController {
     public void deletar (@PathVariable Long id){
         service.deletar(id);
     }
+
+    @GetMapping("/buscar")
+    public List<JogoResponseDTO> buscar(@RequestParam String titulo){
+        return service.buscarPorTitulo(titulo);
+    }
+
+    @PostMapping("/buscar-varios")
+    public List<JogoResponseDTO> buscarVarios(@RequestBody List<Long> ids){
+        return service.buscarVarios(ids);
+    }
 }

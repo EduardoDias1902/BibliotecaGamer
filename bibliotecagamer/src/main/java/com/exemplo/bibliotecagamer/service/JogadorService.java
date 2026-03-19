@@ -15,7 +15,7 @@ public class JogadorService {
 
     private final JogadorRepository repository;
 
-    // ✅ CREATE
+
     public JogadorResponseDTO salvar(JogadorRequestDTO dto){
 
         Jogador jogador = new Jogador();
@@ -25,7 +25,7 @@ public class JogadorService {
         return toDTO(repository.save(jogador));
     }
 
-    // ✅ READ (LISTAR)
+
     public List<JogadorResponseDTO> listar(){
         return repository.findAll()
                 .stream()
@@ -33,7 +33,7 @@ public class JogadorService {
                 .toList();
     }
 
-    // ✅ READ (POR ID)
+
     public JogadorResponseDTO buscarPorId(Long id){
         Jogador jogador = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Jogador não encontrado"));
@@ -41,7 +41,7 @@ public class JogadorService {
         return toDTO(jogador);
     }
 
-    // ✅ UPDATE
+
     public JogadorResponseDTO atualizar(Long id, JogadorRequestDTO dto){
 
         Jogador jogador = repository.findById(id)
@@ -53,17 +53,59 @@ public class JogadorService {
         return toDTO(repository.save(jogador));
     }
 
-    // ✅ DELETE
+
     public void deletar(Long id){
         repository.deleteById(id);
     }
 
-    // 🔹 MÉTODO AUXILIAR (MAPPER)
+
     private JogadorResponseDTO toDTO(Jogador jogador){
         return new JogadorResponseDTO(
                 jogador.getId(),
                 jogador.getNome(),
                 jogador.getEmail()
+        );
+    }
+    public List<JogadorResponseDTO> buscarPorNome(String nome){
+        return repository.findByNomeContainingIgnoreCase(nome)
+                .stream()
+                .map(j -> new JogadorResponseDTO(
+                        j.getId(),
+                        j.getNome(),
+                        j.getEmail()
+                )).toList();
+    }
+    public JogadorResponseDTO buscarPorEmail(String email){
+
+        Jogador j = repository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Jogador não encontrado"));
+
+        return new JogadorResponseDTO(
+                j.getId(),
+                j.getNome(),
+                j.getEmail()
+        );
+    }
+    public List<JogadorResponseDTO> buscarVarios(List<Long> ids){
+
+        return repository.findByIdIn(ids)
+                .stream()
+                .map(j -> new JogadorResponseDTO(
+                        j.getId(),
+                        j.getNome(),
+                        j.getEmail()
+                ))
+                .toList();
+    }
+    public JogadorResponseDTO buscarPorIdENome(Long id, String nome){
+
+        Jogador j = repository.findByIdAndNome(id, nome)
+                .orElseThrow(() -> new RuntimeException("Jogador não encontrado"));
+
+        return new JogadorResponseDTO(
+                j.getId(),
+                j.getNome(),
+                j.getEmail()
         );
     }
 }

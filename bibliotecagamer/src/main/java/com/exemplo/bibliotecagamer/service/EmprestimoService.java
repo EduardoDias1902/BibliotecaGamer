@@ -21,7 +21,7 @@ public class EmprestimoService {
     private final JogadorRepository jogadorRepository;
     private final JogoRepository jogoRepository;
 
-    // ✅ CREATE
+
     public EmprestimoResponseDTO salvar(EmprestimoRequestDTO dto){
 
         Jogador jogador = buscarJogador(dto.jogadorId());
@@ -35,7 +35,7 @@ public class EmprestimoService {
         return toDTO(emprestimoRepository.save(emprestimo));
     }
 
-    // ✅ READ (LISTAR)
+
     public List<EmprestimoResponseDTO> listar(){
         return emprestimoRepository.findAll()
                 .stream()
@@ -43,7 +43,7 @@ public class EmprestimoService {
                 .toList();
     }
 
-    // ✅ READ (POR ID)
+
     public EmprestimoResponseDTO buscarPorId(Long id){
         Emprestimo e = emprestimoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado"));
@@ -51,7 +51,7 @@ public class EmprestimoService {
         return toDTO(e);
     }
 
-    // ✅ UPDATE
+
     public EmprestimoResponseDTO atualizar(Long id, EmprestimoRequestDTO dto){
 
         Emprestimo emprestimo = emprestimoRepository.findById(id)
@@ -67,12 +67,12 @@ public class EmprestimoService {
         return toDTO(emprestimoRepository.save(emprestimo));
     }
 
-    // ✅ DELETE
+
     public void deletar(Long id){
         emprestimoRepository.deleteById(id);
     }
 
-    // 🔹 MÉTODOS AUXILIARES
+
 
     private Jogador buscarJogador(Long id){
         return jogadorRepository.findById(id)
@@ -91,5 +91,40 @@ public class EmprestimoService {
                 e.getJogo().getTitulo(),
                 e.getDataEmprestimo()
         );
+    }
+    public List<EmprestimoResponseDTO> buscarPorJogador(Long jogadorId){
+
+        return emprestimoRepository.findByJogadorId(jogadorId)
+                .stream()
+                .map(e -> new EmprestimoResponseDTO(
+                        e.getId(),
+                        e.getJogador().getNome(),
+                        e.getJogo().getTitulo(),
+                        e.getDataEmprestimo()
+                )).toList();
+    }
+    public List<EmprestimoResponseDTO> buscarPorJogo(Long jogoId){
+
+        return emprestimoRepository.findByJogoId(jogoId)
+                .stream()
+                .map(e -> new EmprestimoResponseDTO(
+                        e.getId(),
+                        e.getJogador().getNome(),
+                        e.getJogo().getTitulo(),
+                        e.getDataEmprestimo()
+                ))
+                .toList();
+    }
+    public List<EmprestimoResponseDTO> buscarPorJogadorEJogo(Long jogadorId, Long jogoId){
+
+        return emprestimoRepository.findByJogadorIdAndJogoId(jogadorId, jogoId)
+                .stream()
+                .map(e -> new EmprestimoResponseDTO(
+                        e.getId(),
+                        e.getJogador().getNome(),
+                        e.getJogo().getTitulo(),
+                        e.getDataEmprestimo()
+                ))
+                .toList();
     }
 }

@@ -15,7 +15,7 @@ public class CategoriaService {
 
     private final CategoriaRepository repository;
 
-    // ✅ CREATE
+
     public CategoriaResponseDTO salvar(CategoriaRequestDTO dto){
 
         Categoria categoria = new Categoria();
@@ -24,7 +24,7 @@ public class CategoriaService {
         return toDTO(repository.save(categoria));
     }
 
-    // ✅ READ (LISTAR)
+
     public List<CategoriaResponseDTO> listar(){
         return repository.findAll()
                 .stream()
@@ -32,7 +32,7 @@ public class CategoriaService {
                 .toList();
     }
 
-    // ✅ READ (POR ID)
+
     public CategoriaResponseDTO buscarPorId(Long id){
         Categoria categoria = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
@@ -40,7 +40,7 @@ public class CategoriaService {
         return toDTO(categoria);
     }
 
-    // ✅ UPDATE
+
     public CategoriaResponseDTO atualizar(Long id, CategoriaRequestDTO dto){
 
         Categoria categoria = repository.findById(id)
@@ -51,16 +51,43 @@ public class CategoriaService {
         return toDTO(repository.save(categoria));
     }
 
-    // ✅ DELETE
+
     public void deletar(Long id){
         repository.deleteById(id);
     }
 
-    // 🔹 MÉTODO AUXILIAR (MAPPER)
     private CategoriaResponseDTO toDTO(Categoria categoria){
         return new CategoriaResponseDTO(
                 categoria.getId(),
                 categoria.getNome()
         );
+    }
+    public List<CategoriaResponseDTO> buscarPorNome(String nome){
+        return repository.findByNomeContainingIgnoreCase(nome)
+                .stream()
+                .map(c -> new CategoriaResponseDTO(
+                        c.getId(),
+                        c.getNome()
+                )).toList();
+    }
+    public CategoriaResponseDTO buscarNomeExato(String nome){
+
+        Categoria c = repository.findByNome(nome)
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+
+        return new CategoriaResponseDTO(
+                c.getId(),
+                c.getNome()
+        );
+    }
+    public List<CategoriaResponseDTO> buscarVarias(List<Long> ids){
+
+        return repository.findByIdIn(ids)
+                .stream()
+                .map(c -> new CategoriaResponseDTO(
+                        c.getId(),
+                        c.getNome()
+                ))
+                .toList();
     }
 }

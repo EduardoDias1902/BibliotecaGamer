@@ -80,4 +80,42 @@ public class JogoService {
                 jogo.getCategoria().getNome()
         );
     }
+
+    public List<JogoResponseDTO> buscarPorTitulo(String titulo){
+
+        return jogoRepository.findByTituloContaining(titulo)
+                .stream()
+                .map(j -> new JogoResponseDTO(
+                        j.getId(),
+                        j.getTitulo(),
+                        j.getPlataforma(),
+                        j.getCategoria().getNome()
+                ))
+                .toList();
+    }
+    public List<JogoResponseDTO> buscarVarios(List<Long> ids){
+
+        return jogoRepository.findByIdIn(ids)
+                .stream()
+                .map(j -> new JogoResponseDTO(
+                        j.getId(),
+                        j.getTitulo(),
+                        j.getPlataforma(),
+                        j.getCategoria().getNome()
+                ))
+                .toList();
+    }
+    public JogoResponseDTO buscarPorIdETitulo(Long id, String titulo){
+
+        Jogo jogo = jogoRepository.findByIdAndTitulo(id, titulo)
+                .orElseThrow(() -> new RuntimeException("Jogo não encontrado"));
+
+        return new JogoResponseDTO(
+                jogo.getId(),
+                jogo.getTitulo(),
+                jogo.getPlataforma(),
+                jogo.getCategoria().getNome()
+        );
+    }
+
 }

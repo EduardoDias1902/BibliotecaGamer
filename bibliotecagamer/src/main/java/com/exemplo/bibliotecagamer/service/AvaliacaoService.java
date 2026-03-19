@@ -21,13 +21,13 @@ public class AvaliacaoService {
     private final JogadorRepository jogadorRepository;
     private final JogoRepository jogoRepository;
 
-    // ✅ CREATE
+
     public AvaliacaoResponseDTO salvar(AvaliacaoRequestDTO dto){
 
         Jogador jogador = buscarJogador(dto.jogadorId());
         Jogo jogo = buscarJogo(dto.jogoId());
 
-        // 🔥 validação simples (importante)
+
         if (dto.nota() < 0 || dto.nota() > 10) {
             throw new RuntimeException("Nota deve estar entre 0 e 10");
         }
@@ -40,15 +40,14 @@ public class AvaliacaoService {
         return toDTO(avaliacaoRepository.save(avaliacao));
     }
 
-    // ✅ READ (LISTAR)
-    public List<AvaliacaoResponseDTO> listar(){
+     public List<AvaliacaoResponseDTO> listar(){
         return avaliacaoRepository.findAll()
                 .stream()
                 .map(this::toDTO)
                 .toList();
     }
 
-    // ✅ READ (POR ID)
+
     public AvaliacaoResponseDTO buscarPorId(Long id){
         Avaliacao avaliacao = avaliacaoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Avaliação não encontrada"));
@@ -56,7 +55,7 @@ public class AvaliacaoService {
         return toDTO(avaliacao);
     }
 
-    // ✅ UPDATE
+
     public AvaliacaoResponseDTO atualizar(Long id, AvaliacaoRequestDTO dto){
 
         Avaliacao avaliacao = avaliacaoRepository.findById(id)
@@ -76,12 +75,11 @@ public class AvaliacaoService {
         return toDTO(avaliacaoRepository.save(avaliacao));
     }
 
-    // ✅ DELETE
+
     public void deletar(Long id){
         avaliacaoRepository.deleteById(id);
     }
 
-    // 🔹 MÉTODOS AUXILIARES
 
     private Jogador buscarJogador(Long id){
         return jogadorRepository.findById(id)
@@ -101,4 +99,51 @@ public class AvaliacaoService {
                 a.getNota()
         );
     }
+    public List<AvaliacaoResponseDTO> buscarNotasAltas(){
+
+        return avaliacaoRepository.findByNotaGreaterThanEqual(8)
+                .stream()
+                .map(a -> new AvaliacaoResponseDTO(
+                        a.getId(),
+                        a.getJogador().getNome(),
+                        a.getJogo().getTitulo(),
+                        a.getNota()
+                )).toList();
+    }
+    public List<AvaliacaoResponseDTO> buscarPorJogo(Long jogoId){
+
+        return avaliacaoRepository.findByJogoId(jogoId)
+                .stream()
+                .map(a -> new AvaliacaoResponseDTO(
+                        a.getId(),
+                        a.getJogador().getNome(),
+                        a.getJogo().getTitulo(),
+                        a.getNota()
+                ))
+                .toList();
+    }
+    public List<AvaliacaoResponseDTO> buscarNotasAltasPorJogador(Long jogadorId){
+
+        return avaliacaoRepository.findByJogadorIdAndNotaGreaterThanEqual(jogadorId, 8)
+                .stream()
+                .map(a -> new AvaliacaoResponseDTO(
+                        a.getId(),
+                        a.getJogador().getNome(),
+                        a.getJogo().getTitulo(),
+                        a.getNota()
+                ))
+                .toList();
+    }
+    public List<AvaliacaoResponseDTO> buscarPorjogador (Long jogadorId){
+        return avaliacaoRepository.findByJogadorId(jogadorId)
+                .stream()
+                .map(a -> new AvaliacaoResponseDTO(
+                        a.getId(),
+                        a.getJogador().getNome(),
+                        a.getJogo().getTitulo(),
+                        a.getNota()
+                ))
+                .toList();
+    }
+
 }
